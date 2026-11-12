@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Agenda de Contactos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+
+    <header class="encabezado">
+        <div>
+            <h1>♡ Mi Agenda</h1>
+            <p>Todos tus contactos en un solo lugar</p>
+        </div>
+    </header>
+
+    <main class="contenedor">
+
+        {% with mensajes = get_flashed_messages() %}
+            {% if mensajes %}
+                {% for mensaje in mensajes %}
+                    <div class="mensaje">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block contenido %}
+        {% endblock %}
+
+    </main>
+
+    <footer>
+        <p>Mi Agenda de Contactos · Proyecto Flask + SQLite</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<section class="bienvenida">
+    <h2>¡Bienvenido a tu agenda! ✨</h2>
+    <p>Organiza tus contactos y guarda sus fotografías.</p>
+</section>
+
+<section class="tarjeta">
+    <h2>♡ Agregar nuevo contacto</h2>
+
+    <form action="{{ url_for('agregar') }}"
+          method="POST"
+          enctype="multipart/form-data">
+
+        <div class="formulario-grid">
+
+            <div class="campo">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" required>
+            </div>
+
+            <div class="campo">
+                <label>Teléfono *</label>
+                <input type="tel" name="telefono" required>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico</label>
+                <input type="email" name="correo">
+            </div>
+
+            <div class="campo">
+                <label>Categoría *</label>
+                <select name="categoria" required>
+                    <option value="">Selecciona</option>
+                    <option value="Familia">Familia</option>
+                    <option value="Amigos">Amigos</option>
+                    <option value="Escuela">Escuela</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
+            <div class="campo campo-completo">
+                <label>Instagram 📷</label>
+                <input type="text" name="instagram"
+                       placeholder="@usuario">
+            </div>
+
+            <div class="campo campo-completo">
+                <label>Fotografía del contacto</label>
+                <input type="file" name="foto"
+                       accept="image/png,image/jpeg,image/gif,image/webp">
+                <small>Formatos permitidos: JPG, PNG, GIF y WEBP.</small>
+            </div>
+
+        </div>
+
+        <button type="submit" class="boton">
+            + Guardar contacto
+        </button>
+
+    </form>
+</section>
+
+
+<section class="tarjeta">
+
+    <div class="titulo-lista">
+        <h2>♡ Mis contactos</h2>
+        <span>{{ contactos|length }} registrados</span>
+    </div>
+
+    {% if contactos %}
+
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Categoría</th>
+                    <th>Instagram</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for contacto in contactos %}
+                <tr>
+
+                    <td>
+                        {% if contacto.foto %}
+                            <img class="foto-contacto"
+                                 src="{{ url_for('static', filename='uploads/' + contacto.foto) }}"
+                                 alt="Foto de {{ contacto.nombre }}">
+                        {% else %}
+                            <div class="sin-foto">♡</div>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ contacto.nombre }}</td>
+                    <td>{{ contacto.telefono }}</td>
+                    <td>{{ contacto.correo or "Sin correo" }}</td>
+                    <td>
+                        <span class="categoria">
+                            {{ contacto.categoria }}
+                        </span>
+                    </td>
+                    <td>{{ contacto.instagram or "Sin Instagram" }}</td>
+
+                    <td class="acciones">
+
+                        <a class="editar"
+                           href="{{ url_for('editar', id=contacto.id) }}">
+                            Editar
+                        </a>
+
+                        <form action="{{ url_for('eliminar', id=contacto.id) }}"
+                              method="POST"
+                              onsubmit="return confirm('¿Deseas eliminar este contacto?');">
+
+                            <button type="submit" class="eliminar">
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="vacio">
+        <h3>♡ Tu agenda está vacía</h3>
+        <p>Agrega tu primer contacto para comenzar.</p>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

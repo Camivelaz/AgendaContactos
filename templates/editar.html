@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<section class="tarjeta editar-tarjeta">
+
+    <h2>✎ Editar contacto</h2>
+    <p>Modifica la información de {{ contacto.nombre }}.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="formulario-grid">
+
+            <div class="campo">
+                <label>Nombre *</label>
+                <input type="text" name="nombre"
+                       value="{{ contacto.nombre }}" required>
+            </div>
+
+            <div class="campo">
+                <label>Teléfono *</label>
+                <input type="tel" name="telefono"
+                       value="{{ contacto.telefono }}" required>
+            </div>
+
+            <div class="campo">
+                <label>Correo electrónico</label>
+                <input type="email" name="correo"
+                       value="{{ contacto.correo or '' }}">
+            </div>
+
+            <div class="campo">
+                <label>Categoría *</label>
+                <select name="categoria" required>
+                    {% for categoria in ["Familia", "Amigos", "Escuela", "Trabajo", "Otro"] %}
+                    <option value="{{ categoria }}"
+                        {% if contacto.categoria == categoria %}selected{% endif %}>
+                        {{ categoria }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="campo campo-completo">
+                <label>Instagram 📷</label>
+                <input type="text" name="instagram"
+                       value="{{ contacto.instagram or '' }}">
+            </div>
+
+            <div class="campo campo-completo">
+                <label>Fotografía actual</label>
+
+                {% if contacto.foto %}
+                    <img class="foto-editar"
+                         src="{{ url_for('static', filename='uploads/' + contacto.foto) }}"
+                         alt="Fotografía actual">
+                {% else %}
+                    <p>Este contacto todavía no tiene fotografía.</p>
+                {% endif %}
+
+                <label>Elegir una nueva fotografía</label>
+                <input type="file" name="foto"
+                       accept="image/png,image/jpeg,image/gif,image/webp">
+            </div>
+
+        </div>
+
+        <button type="submit" class="boton">
+            Guardar cambios
+        </button>
+
+        <a href="{{ url_for('inicio') }}" class="volver">
+            Cancelar y volver
+        </a>
+
+    </form>
+
+</section>
+
+{% endblock %}
