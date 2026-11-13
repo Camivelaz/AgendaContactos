@@ -49,16 +49,13 @@ def agregar():
         correo = request.form.get("correo", "").strip()
         categoria = request.form.get("categoria", "").strip()
         instagram = request.form.get("instagram", "").strip()
-
         if not nombre or not telefono or not categoria:
             flash("Completa los campos obligatorios")
             return redirect(url_for("agregar"))
-
         foto = guardar_foto(request.files.get("foto"))
         if foto is False:
             flash("Formato de foto no permitido")
             return redirect(url_for("agregar"))
-
         conexion = obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
@@ -80,11 +77,9 @@ def editar(id):
     contacto = cursor.fetchone()
     cursor.close()
     conexion.close()
-
     if not contacto:
         flash("Contacto no encontrado")
         return redirect(url_for("index"))
-
     if request.method == "POST":
         nombre = request.form.get("nombre", "").strip()
         telefono = request.form.get("telefono", "").strip()
@@ -92,18 +87,14 @@ def editar(id):
         categoria = request.form.get("categoria", "").strip()
         instagram = request.form.get("instagram", "").strip()
         foto_anterior = contacto["foto"]
-
         if not nombre or not telefono or not categoria:
             flash("Completa los campos obligatorios")
             return redirect(url_for("editar", id=id))
-
         foto_nueva = guardar_foto(request.files.get("foto"))
         if foto_nueva is False:
             flash("Formato de foto no permitido")
             return redirect(url_for("editar", id=id))
-
         foto_final = foto_nueva if foto_nueva else foto_anterior
-
         conexion = obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
@@ -113,13 +104,10 @@ def editar(id):
         conexion.commit()
         cursor.close()
         conexion.close()
-
         if foto_nueva:
             borrar_foto(foto_anterior)
-
         flash("Contacto actualizado")
         return redirect(url_for("index"))
-
     return render_template("editar.html", contacto=contacto)
 
 @app.route("/eliminar/<int:id>")
