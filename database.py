@@ -1,43 +1,31 @@
-import sqlite3
+   import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def obtener_conexion():
-    conexion = sqlite3.connect("contactos.db")
-    conexion.row_factory = sqlite3.Row
-    return conexion
-
+    return psycopg2.connect(
+        os.environ.get("DATABASE_URL"),
+        cursor_factory=RealDictCursor,
+        sslmode='require'
+    )
 
 def crear_tabla():
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS contactos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             nombre TEXT NOT NULL,
-            telefono TEXT NOT NULL,
+            telefono TEXT,
             correo TEXT,
             categoria TEXT NOT NULL,
             instagram TEXT,
             foto TEXT
         )
     """)
-
-    columnas = [
-        columna[1]
-        for columna in cursor.execute(
-            "PRAGMA table_info(contactos)"
-        ).fetchall()
-    ]
-
-    if "instagram" not in columnas:
-        cursor.execute(
-            "ALTER TABLE contactos ADD COLUMN instagram TEXT"
-        )
-
-    if "foto" not in columnas:
-        cursor.execute(
-            "ALTER TABLE contactos ADD COLUMN foto TEXT"
-        )
-
     conexion.commit()
+    cursor.close()
     conexion.close()
