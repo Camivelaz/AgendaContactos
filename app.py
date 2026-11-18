@@ -86,7 +86,7 @@ def editar(id):
         correo = request.form.get("correo", "").strip()
         categoria = request.form.get("categoria", "").strip()
         instagram = request.form.get("instagram", "").strip()
-        foto_anterior = contacto["foto"]
+        foto_anterior = contacto.get("foto") if contacto else None
         if not nombre or not telefono or not categoria:
             flash("Completa los campos obligatorios")
             return redirect(url_for("editar", id=id))
@@ -110,14 +110,14 @@ def editar(id):
         return redirect(url_for("index"))
     return render_template("editar.html", contacto=contacto)
 
-@app.route("/eliminar/<int:id>")
+@app.route("/eliminar/<int:id>", methods=["POST"])
 def eliminar(id):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
     cursor.execute("SELECT * FROM contactos WHERE id = %s", (id,))
     contacto = cursor.fetchone()
     if contacto:
-        borrar_foto(contacto["foto"])
+        borrar_foto(contacto.get("foto"))
         cursor.execute("DELETE FROM contactos WHERE id = %s", (id,))
         conexion.commit()
     cursor.close()
